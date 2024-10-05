@@ -196,10 +196,10 @@ class AttractionsPhotosSerializers(serializers.ModelSerializer):
 
 class AttractionSerializers(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
-    att_photos = AttractionsPhotosSerializers(many=True)
+    attraction_photos = AttractionsPhotosSerializers(many=True)
     class Meta:
         model = Attractions
-        fields = ['at_name', 'description', 'image', 'average_rating']
+        fields = ['at_name', 'description', 'attraction_photos', 'average_rating']
 
 
     def get_average_rating(self, obj):
@@ -217,16 +217,16 @@ class ReviewAttractionSerializer(serializers.ModelSerializer):
     photos_review_attraction = ReviewPhotosAttractionSerializers(many=True)
     class Meta:
         model = ReviewAttraction
-        fields = ['author', 'rating', 'text', 'create_date']
+        fields = ['author', 'rating', 'text', 'create_date', 'photos_review_attraction']
 
 
 class AttractionListSerializers(serializers.ModelSerializer):
     average_rating= serializers.SerializerMethodField()
-    att_photos = AttractionsPhotosSerializers(many=True)
+    attraction_photos = AttractionsPhotosSerializers(many=True)
 
     class Meta:
         model = Attractions
-        fields = ['at_name', 'att_photos', 'average_rating' ]
+        fields = ['at_name', 'attraction_photos', 'average_rating' ]
 
     def get_average_rating(self, obj):
         return obj.get_average_rating()
@@ -269,7 +269,7 @@ class ReviewKitchenSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = ReviewKitchen
-        fields = ['author', 'places', 'rating', 'text', 'create_date', 'photos_review_kitchen']
+        fields = ['author', 'rating', 'text', 'create_date', 'photos_review_kitchen']
 
 
 class KitchenListSerializers(serializers.ModelSerializer):

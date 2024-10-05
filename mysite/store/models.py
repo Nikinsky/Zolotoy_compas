@@ -228,7 +228,7 @@ class Attractions(models.Model):  # Достопремечательности
 
 
 class AttractionsPhotos(models.Model):
-    attraction = models.ForeignKey(Attractions, related_name='att_photos', on_delete=models.CASCADE)
+    attraction = models.ForeignKey(Attractions, related_name='attraction_photos', on_delete=models.CASCADE)
     image = models.ImageField(null=True, blank=True)
 
 
@@ -258,6 +258,7 @@ class PhotosReviewAttraction(models.Model):
 class ReviewLike(models.Model):
     places = models.ForeignKey(Review, on_delete=models.CASCADE)
     hotel = models.ForeignKey(ReviewHotel, on_delete=models.CASCADE)
+
 
 
 
