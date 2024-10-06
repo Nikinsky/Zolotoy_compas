@@ -2,6 +2,12 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
+
     path('places', PlacesViewSet.as_view({'get': 'list', 'post': 'create'}), name='places_list'),
     path('places/<int:pk>/', PlacesViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete':'destroy'}), name='places_detail'),
 

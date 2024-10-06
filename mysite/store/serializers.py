@@ -1,20 +1,39 @@
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import SerializerMethodField
 from .models import *
 from django.contrib.auth import authenticate
 from django.db.models import Count
+from django.contrib.auth import authenticate
 
 
 class UserSerializers(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True)
+
     class Meta:
         model = UserProfile
-        fields = ['email', 'password', 'username', 'last_name', 'birth_date', 'phone_number', 'image']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['email', 'username', 'password', 'password_confirm', 'birth_date', 'phone_number', 'image', 'first_name', 'last_name']
 
+    def validate(self, data):
+        if data['password'] != data['password_confirm']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return data
 
     def create(self, validated_data):
-        user = UserProfile.objects.create_user(**validated_data)
+        # Убираем поле 'password_confirm' перед сохранением
+        validated_data.pop('password_confirm')
+
+        # Создаем пользователя
+        user = UserProfile.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+
         return user
+
 
 
 # class LoginSerializers(serializers.Serializer):
@@ -25,6 +44,30 @@ class UserSerializers(serializers.ModelSerializer):
 #         user = authenticate(**data)
 #         if user and user.is_active:
 #             return user
+#         raise serializers.ValidationError('Неверные учетные данные')
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        # Проверяем, что пароли совпадают
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match.")
+
+        # Аутентификация по email
+        user = UserProfile.objects.filter(email=data['email']).first()
+        if user:
+            if not user.check_password(data['password']):
+                raise AuthenticationFailed("Invalid credentials, unable to login.")
+        else:
+            raise AuthenticationFailed("User not found with this email.")
+
+        data['user'] = user
+        return data
+
+
 
 class UserProfileSerializers(serializers.ModelSerializer):
     class Meta:
@@ -194,6 +237,7 @@ class AttractionsPhotosSerializers(serializers.ModelSerializer):
         model = AttractionsPhotos
         fields = ['image']
 
+
 class AttractionSerializers(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
     attraction_photos = AttractionsPhotosSerializers(many=True)
@@ -261,7 +305,6 @@ class ReviewPhotosKitchenSerializers(serializers.ModelSerializer):
     class Meta:
         model = PhotosReviewKitchen
         fields = ['image']
-
 
 class ReviewKitchenSerializers(serializers.ModelSerializer):
     author = UserProfileSimpleSerializers()
