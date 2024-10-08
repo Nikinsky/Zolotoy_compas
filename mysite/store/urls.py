@@ -8,11 +8,22 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
 
 
+
+
+    path('userprofile', UserProfileView.as_view({'get': 'list', 'post': 'create'}), name='userprofile_list'),
+    path('userprofile/<int:pk>/', UserProfileView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='userprofile_detail'),
+
+    path('address', AddressView.as_view({'get': 'list', 'post': 'create'}), name='address_list'),
+    path('address/<int:pk>/', AddressView.as_view({'get': 'retrieve', 'put': 'update', 'delete':'destroy'}), name='address_detail'),
+
+
+
+
     path('places', PlacesViewSet.as_view({'get': 'list', 'post': 'create'}), name='places_list'),
     path('places/<int:pk>/', PlacesViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete':'destroy'}), name='places_detail'),
 
     path('places_list', PlacesListView.as_view({'get': 'list', 'post': 'create'}), name='places_list_list'),
-    path('place_slist/<int:pk>/', PlacesListView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),name='places_list_detail'),
+    path('place_list/<int:pk>/', PlacesListView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),name='places_list_detail'),
 
     path('review', ReviewView.as_view({'get': 'list', 'post': 'create'}), name='review_list'),
     path('review/<int:pk>/', ReviewView.as_view({'get': 'retrieve', 'put': 'update', 'delete':'destroy'}), name='review_detail'),
@@ -77,8 +88,9 @@ urlpatterns = [
     path('attractions', AttractionsView.as_view({'get': 'list', 'post': 'create'}), name='attractions_list'),
     path('attractions/<int:pk>/', AttractionsView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='attractions_detail'),
 
-    path('attraction_list', AttractionListView.as_view({'get': 'list'}), name='atttraction_list_list'),
+    path('attraction_list', AttractionListView.as_view({'get': 'list'}), name='attraction_list_list'),
 
+    path('attractions_regions_list', AttractionSimpleListView.as_view({'get': 'list'}), name='attraction_region_list'),
 
     path('review_attraction', ReviewAttractionView.as_view({'get': 'list', 'post': 'create'}), name='review_attraction_list'),
     path('review_attraction/<int:pk>/', ReviewAttractionView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='review_attraction_detail'),

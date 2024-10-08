@@ -1,9 +1,5 @@
-import reverse
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, generics, permissions
 from rest_framework.views import APIView
 from .serializers import *
@@ -88,6 +84,21 @@ class UserProfileView(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializers
 
 
+class AddressView(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = AddressSerializer
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -117,7 +128,6 @@ class PlacesViewSet(viewsets.ModelViewSet):
 
 
 
-
 class PlacesPhotosView(viewsets.ModelViewSet):
     queryset = PlacesPhotos.objects.all()
     serializer_class = PlacesPhotosSerializers
@@ -131,6 +141,9 @@ class ReviewView(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     # filterset_class = ReviewPlacesFilter
+
+
+
 
 
 
@@ -154,7 +167,10 @@ class AttractionListView(viewsets.ModelViewSet):
     filterset_class = AttractionFilter
 
 
-
+class AttractionSimpleListView(viewsets.ModelViewSet):
+    queryset = Attractions.objects.all()
+    serializer_class = AttractionSimpleListSerializers
+    filterset_class = AttractionFilter
 
 
 
@@ -200,6 +216,11 @@ class KitchenListView(viewsets.ModelViewSet):
 
 
 
+
+
+
+
+
 class CartView(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializers
@@ -207,6 +228,12 @@ class CartView(viewsets.ModelViewSet):
 class CartItemsView(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializers
+
+
+
+
+
+
 
 
 

@@ -1,3 +1,5 @@
+from django.contrib.admin.utils import model_ngettext
+from django_countries.serializers import CountryFieldMixin
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import SerializerMethodField
@@ -5,6 +7,7 @@ from .models import *
 from django.contrib.auth import authenticate
 from django.db.models import Count
 from django.contrib.auth import authenticate
+from django_countries.serializers import CountryFieldMixin
 
 
 class UserSerializers(serializers.ModelSerializer):
@@ -46,6 +49,8 @@ class UserSerializers(serializers.ModelSerializer):
 #             return user
 #         raise serializers.ValidationError('Неверные учетные данные')
 
+
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -72,13 +77,28 @@ class LoginSerializer(serializers.Serializer):
 class UserProfileSerializers(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', 'password', 'last_name', 'birth_date', 'phone_number', 'image']
+        fields = ['username', 'email', 'password', 'last_name', 'birth_date', 'phone_number', 'image', 'addre']
 
 
 class UserProfileSimpleSerializers(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['username', 'last_name', 'image']
+
+
+
+
+class AddressSerializer(CountryFieldMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['city', 'country']
+
+
+
+
+
+
+
 
 
 
@@ -176,10 +196,22 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 
+class ConditionsSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Conditions
+        fields = ['name_conditions', 'icon']
 
 
+class OfferedSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Offered_amenities
+        fields = ['name_offered', 'icon']
 
 
+class SafetySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Safety_and_hydigene
+        fields = ['name_safety', 'icon']
 
 
 
@@ -192,10 +224,15 @@ class HotelPhotosSerializers(serializers.ModelSerializer):
 class HotelSerializers(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
     photos_hotel = HotelPhotosSerializers(many=True)
+    conditions = ConditionsSerializers(many=True)
+    offereds = OfferedSerializers(many=True)
+    safetys = SafetySerializers(many=True)
+
 
     class Meta:
         model = Hotel
-        fields = ['places', 'hotel_name', 'address', 'average_rating', 'description', 'photos_hotel', 'offered_amenities', 'laest', 'short_period', 'medium_period', 'long_period', 'phone_number', 'bedroom', 'bathroom', 'car_bikes', 'pets_allow', ]
+        fields = ['places', 'hotel_name', 'address', 'average_rating', 'description', 'photos_hotel',
+                'short_period', 'medium_period', 'long_period', 'phone_number', 'conditions', 'offereds', 'safetys' ]
 
 
     def get_average_rating(self, obj):
@@ -228,6 +265,13 @@ class HotelListSerializers(serializers.ModelSerializer):
 
     def get_average_rating(self, obj):
         return obj.get_average_rating()
+
+
+
+
+
+
+
 
 
 
@@ -270,12 +314,23 @@ class AttractionListSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Attractions
-        fields = ['at_name', 'attraction_photos', 'average_rating' ]
+        fields = ['at_name', 'attraction_photos', 'average_rating', 'description']
 
     def get_average_rating(self, obj):
         return obj.get_average_rating()
 
 
+
+class AttractionSimpleListSerializers(serializers.ModelSerializer):
+    average_rating= serializers.SerializerMethodField()
+    attraction_photos = AttractionsPhotosSerializers(many=True)
+
+    class Meta:
+        model = Attractions
+        fields = ['at_name', 'attraction_photos', 'average_rating',]
+
+    def get_average_rating(self, obj):
+        return obj.get_average_rating()
 
 
 
@@ -290,6 +345,7 @@ class KitchenPhotosSerializers(serializers.ModelSerializer):
 class KitchenSerializers(serializers.ModelSerializer):
     kit_photos = KitchenPhotosSerializers(many=True)
     average_rating = SerializerMethodField()
+
     class Meta:
         model = Kitchen
         fields = ['name_kitchen', 'category', 'price_range', 'specialized_menu', 'meal_time', 'address', 'email', 'phone_number', 'average_rating',

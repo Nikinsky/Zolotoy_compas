@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import BooleanField
 from phonenumber_field.modelfields import PhoneNumberField
+from django_countries.fields import CountryField
 
 
 
@@ -10,11 +11,21 @@ class UserProfile(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     phone_number = PhoneNumberField(null=True,blank=True, region="KG")
     image = models.ImageField(null=True, blank=True)
+    address = models.CharField(max_length=32)
+
+
     def __str__(self):
         return f'{self.username} - {self.last_name}'
 
 
+class Address(models.Model):
+    user = models.ForeignKey(UserProfile, related_name='Addresses', on_delete=models.CASCADE)
+    street = models.CharField(max_length=32)
+    city = models.CharField(max_length=32)
+    country = CountryField()
 
+    def __str__(self):
+        return f'{self.user} - {self.city} - {self.country}'
 
 
 
@@ -92,25 +103,16 @@ class PhotosReview(models.Model):
 
 
 
-
-
-
 class Hotel(models.Model):
     places = models.ForeignKey(Places, on_delete=models.CASCADE)
     hotel_name = models.CharField(max_length=32)
+    title_name = models.CharField(max_length=32)
     address = models.CharField(max_length=64)
     description = models.TextField()
-    offered_amenities = models.TextField()
-    laest = models.IntegerField(default=0)
     short_period = models.IntegerField(default=1000)
     medium_period = models.IntegerField(default=1500)
     long_period = models.IntegerField(default=2000)
     phone_number = PhoneNumberField(null=True,blank=True, region="KG")
-    bedroom = models.CharField(max_length=32, null=True, blank=True, default=0)
-    bathroom = models.CharField(max_length=32, null=True, blank=True, default=0)
-    car_bikes = models.CharField(max_length=32, null=True, blank=True, default=0)
-    pets_allow = models.CharField(max_length=32, null=True, blank=True, default=0)
-
 
 
     def get_average_rating(self):
@@ -150,6 +152,24 @@ class ReviewHotel(models.Model):
 class PhotosReviewHotel(models.Model):
     review = models.ForeignKey(ReviewHotel, related_name='photos_review_hotel', on_delete=models.CASCADE)
     image = models.ImageField(null=True, blank=True)
+
+
+class Conditions(models.Model):
+    hotel = models.ForeignKey(Hotel, related_name='conditions', on_delete=models.CASCADE)
+    name_conditions = models.CharField(max_length=32)
+    icon = models.ImageField(upload_to='icon_conditions/')
+
+
+class Offered_amenities(models.Model):
+    hotel = models.ForeignKey(Hotel, related_name='offereds', on_delete=models.CASCADE)
+    name_offered = models.CharField(max_length=32)
+    icon = models.ImageField(upload_to='icons_offered/')
+
+
+class Safety_and_hydigene(models.Model):
+    hotel = models.ForeignKey(Hotel, related_name='safetys', on_delete=models.CASCADE)
+    name_safety = models.CharField(max_length=32)
+    icon = models.ImageField(upload_to='icons_safety/', null=True, blank=True)
 
 
 

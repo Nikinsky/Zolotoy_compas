@@ -24,12 +24,7 @@ class ReviewPhotosInline(admin.TabularInline):
 class ReviewPhotosAdmin(admin.ModelAdmin):
     inlines = [ReviewPhotosInline]
 
-class HotelPhotosInline(admin.TabularInline):
-    model = HotelPhotos
-    extra = 1
 
-class HotelPhotosAdmin(admin.ModelAdmin):
-    inlines = [HotelPhotosInline]
 
 class AttractionPhotosInline(admin.TabularInline):
     model = AttractionsPhotos
@@ -67,13 +62,37 @@ class ReviewHotelPhotosInline(admin.TabularInline):
 class ReviewHotelPhotosAdmin(admin.ModelAdmin):
     inlines = [ReviewHotelPhotosInline]
 
+class ConditionsInline(admin.TabularInline):
+    model = Conditions
+    extra = 1
+
+class OfferedAmenitiesInline(admin.TabularInline):
+    model = Offered_amenities
+    extra = 1
+
+class SafetyInline(admin.TabularInline):
+    model = Safety_and_hydigene
+    extra =1
+
+class HotelPhotosInline(admin.TabularInline):
+    model = HotelPhotos
+    extra = 1
+
+class HotelListAdmin(admin.ModelAdmin):
+    inlines = [ConditionsInline, OfferedAmenitiesInline, SafetyInline, HotelPhotosInline]
+
+
+# class HotelPhotosAdmin(admin.ModelAdmin):
+#     inlines = [HotelPhotosInline]
+#
+admin.site.register(Hotel, HotelListAdmin)
 
 
 admin.site.register(Region, RegionPhotosAdmin)
 admin.site.register(UserProfile)
 admin.site.register(RegionFood)
 admin.site.register(Places, PlacesPhotosAdmin)
-admin.site.register(Hotel, HotelPhotosAdmin)
+# admin.site.register(Hotel, HotelPhotosAdmin)
 admin.site.register(Kitchen, KitchenPhotosAdmin)
 admin.site.register(Attractions, AttractionPhotosAdmin)
 admin.site.register(Culture)
@@ -89,4 +108,6 @@ admin.site.register(Review, ReviewPhotosAdmin)
 admin.site.register(ReviewHotel, ReviewHotelPhotosAdmin)
 admin.site.register(ReviewKitchen, ReviewKitchenPhotosAdmin)
 admin.site.register(ReviewAttraction, ReviewAttractionsPhotosAdmin)
+admin.site.register(Address)
+
 
